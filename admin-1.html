@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="ht">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#120911">
+<title>HT Music · Admin</title>
+<style>
+:root{--bg:#120911;--panel:#1d121c;--panel2:#271a26;--line:rgba(255,255,255,.12);--ink:#fff;--mute:#b9a9b6;--acc:#ff8a1f;--ok:#3ddc84;--bad:#ff5d6c;--blue:#5aa9ff;--bar:rgba(18,9,17,.94);color-scheme:dark}
+@media(prefers-color-scheme:light){:root{--bg:#f7f1f6;--panel:#ffffff;--panel2:#f1e8f0;--line:rgba(0,0,0,.12);--ink:#1b1019;--mute:#6b5a68;--ok:#12a15a;--bad:#d6334a;--blue:#1f6fd1;--bar:rgba(247,241,246,.94);color-scheme:light}}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;overflow-wrap:anywhere}
+body{padding:env(safe-area-inset-top) 0 calc(72px + env(safe-area-inset-bottom))}
+header{position:sticky;top:0;z-index:5;background:var(--bar);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:calc(10px + env(safe-area-inset-top)) 14px 10px;display:flex;align-items:center;gap:8px}
+header h1{font-size:17px;margin:0;flex:1}
+header h1 span{color:var(--acc)}
+.badge{font-size:11px;font-weight:800;padding:3px 8px;border-radius:99px;background:var(--panel2);color:var(--mute);white-space:nowrap}
+.badge.demo{background:var(--acc);color:#2a1200}
+main{max-width:980px;margin:0 auto;padding:14px 14px 24px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+h2{font-size:15px;margin:0 0 10px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
+@media(min-width:640px){.grid{grid-template-columns:repeat(4,1fr)}}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}
+.stat b{display:block;font-size:24px;line-height:1.1}
+.stat span{color:var(--mute);font-size:12px}
+.stat.live b{color:var(--ok)}
+input,select,textarea,button{font:inherit;color:inherit}
+input,select,textarea{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;max-width:100%}
+textarea{resize:vertical;min-height:80px}
+input::placeholder,textarea::placeholder{color:var(--mute);opacity:.8}
+button{cursor:pointer;border:0;border-radius:10px;padding:10px 14px;background:var(--panel2);font-weight:700}
+button.pri{background:var(--acc);color:#2a1200}
+button.bad{background:rgba(255,93,108,.16);color:var(--bad)}
+button.ok{background:rgba(61,220,132,.16);color:var(--ok)}
+button.sm{padding:6px 10px;font-size:13px}
+button:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row>*{flex:1 1 140px}
+.row>.fix{flex:none}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;background:var(--bar);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;border-radius:0;padding:11px 2px;color:var(--mute);font-size:11px;position:relative}
+nav button[aria-selected="true"]{color:var(--acc)}
+nav button i{position:absolute;top:4px;right:calc(50% - 22px);background:var(--bad);color:#fff;font:800 10px system-ui;font-style:normal;border-radius:99px;padding:1px 5px}
+.ev{border-top:1px solid var(--line);padding:10px 0}
+.ev:first-child{border-top:0}
+.ev .top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tag{font-size:11px;font-weight:800;padding:2px 8px;border-radius:99px;background:var(--panel2)}
+.tag.signup,.tag.purchase,.tag.publish,.tag.gift,.tag.subscribe,.tag.ouvè{background:rgba(61,220,132,.16);color:var(--ok)}
+.tag.login_fail,.tag.admin_login_fail,.tag.error,.tag.admin_block,.tag.nouvo{background:rgba(255,93,108,.16);color:var(--bad)}
+.tag.play,.tag.page_view{background:rgba(90,169,255,.16);color:var(--blue)}
+.mut{color:var(--mute);font-size:12px}
+.clamp{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;cursor:pointer}
+.clamp.open{-webkit-line-clamp:unset;line-clamp:unset;display:block}
+.bars{display:flex;align-items:flex-end;gap:4px;height:110px}
+.bars div{flex:1;background:var(--acc);border-radius:4px 4px 0 0;min-height:2px;position:relative}
+.bars div i{position:absolute;left:0;right:0;bottom:100%;font:700 10px system-ui;text-align:center;color:var(--mute);font-style:normal}
+.days{display:flex;gap:4px;margin-top:4px}
+.days span{flex:1;text-align:center;font-size:10px;color:var(--mute)}
+.hbar{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13px}
+.hbar .n{width:96px;flex:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hbar .t{flex:1;background:var(--panel2);border-radius:99px;height:8px;overflow:hidden}
+.hbar .t div{height:100%;background:var(--acc)}
+.hbar .v{width:44px;text-align:right;color:var(--mute);flex:none}
+.err{color:var(--bad);min-height:1.3em;margin:8px 0 0;font-size:13px}
+.hide{display:none!important}
+.login{max-width:420px;margin:10vh auto 0}
+.login h1{font-size:26px;margin:0 0 6px}
+.chip{display:inline-flex;gap:6px;align-items:center;background:var(--panel2);border-radius:99px;padding:4px 10px;font-size:12px;margin-bottom:8px}
+.acct{border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:10px}
+.acct input,.acct select{margin-bottom:6px}
+.sw{display:flex;align-items:center;gap:10px;margin:10px 0}
+.sw input{width:auto}
+.cnt{font-size:12px;color:var(--mute);text-align:right}
+.tk{cursor:pointer}
+.msg{max-width:88%;padding:8px 12px;border-radius:14px;margin:6px 0;background:var(--panel2);white-space:pre-wrap}
+.msg.staff{margin-left:auto;background:rgba(255,138,31,.18)}
+.msg small{display:block;color:var(--mute);font-size:11px;margin-top:2px}
+.in{color:var(--ok);font-weight:800}.out{color:var(--bad);font-weight:800}
+.sec li{margin:6px 0}
+#gbtn{display:flex;justify-content:center;margin-top:10px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>HT Music <span>· Admin</span></h1>
+  <span class="badge demo hide" id="demoBadge">DEMO</span>
+  <span class="badge hide" id="roleBadge"></span>
+  <button class="sm hide" id="logout" type="button">Soti</button>
+</header>
+
+<main id="login" class="login">
+  <div class="card">
+    <h1>Admin</h1>
+    <p class="mut">Antre ak kle admin ou. Kle a pa janm nan kòd la.</p>
+    <input id="key" type="password" maxlength="128" placeholder="Kle admin" autocomplete="current-password">
+    <input id="code" class="hide" inputmode="text" maxlength="12" placeholder="Kòd 2FA (6 chif) oswa kòd rekiperasyon" autocomplete="one-time-code" style="margin-top:8px">
+    <input id="base" type="url" maxlength="200" placeholder="Adrès sèvè a (opsyonèl, pa egz. https://...)" style="margin-top:8px">
+    <p class="err" id="loginErr"></p>
+    <div class="row"><button class="pri" id="go" type="button">Konekte</button><button id="demo" type="button">Wè demo</button></div>
+    <div id="gbtn"></div>
+  </div>
+</main>
+
+<main id="app" class="hide">
+  <section id="t-sum">
+    <div class="row" style="margin-bottom:10px"><select id="days" class="fix" style="flex:0 0 150px"><option value="7">7 dènye jou</option><option value="14">14 dènye jou</option><option value="30">30 dènye jou</option></select><button class="fix" id="refSum" type="button">Refrechi</button></div>
+    <div class="grid" id="stats"></div>
+    <div class="card"><h2>Kont pa kalite</h2><div id="roles"></div></div>
+    <div class="card"><h2>Aktivite pa jou</h2><div class="bars" id="bars"></div><div class="days" id="barDays"></div></div>
+    <div class="card"><h2>Kalite aksyon</h2><div id="types"></div></div>
+    <div class="card"><h2>Mizik ki pi koute</h2><div id="tops"></div></div>
+  </section>
+
+  <section id="t-act" class="hide">
+    <div class="card">
+      <div class="row"><select id="fType"><option value="">Tout aksyon</option></select><input id="fQ" maxlength="80" placeholder="Chèche (imèl, mizik, IP...)"></div>
+      <div class="row" style="margin-top:8px"><button class="fix" id="fGo" type="button">Chèche</button><label class="fix mut" style="display:flex;gap:6px;align-items:center;flex:none"><input id="auto" type="checkbox" style="width:auto"> Otomatik (10s)</label><button class="fix own" id="csv" type="button">CSV</button></div>
+      <div id="uChip"></div>
+    </div>
+    <div class="card" id="evs"></div>
+    <button id="more" class="hide" type="button" style="width:100%">Chaje plis</button>
+  </section>
+
+  <section id="t-usr" class="hide">
+    <div class="card"><input id="uQ" maxlength="80" placeholder="Chèche itilizatè (non, imèl, ID)"></div>
+    <div id="users"></div>
+  </section>
+
+  <section id="t-msg" class="hide">
+    <div id="tkList">
+      <div class="card"><div class="row"><select id="tkSt"><option value="">Tout mesaj</option><option value="nouvo">Nouvo</option><option value="ouvè">Ouvè</option><option value="fèmen">Fèmen</option></select><button class="fix" id="tkRef" type="button">Refrechi</button></div></div>
+      <div id="tks"></div>
+    </div>
+    <div id="tkView" class="hide"></div>
+  </section>
+
+  <section id="t-mon" class="hide">
+    <div class="card"><div class="row"><select id="mDays" class="fix" style="flex:0 0 150px"><option value="7">7 dènye jou</option><option value="30" selected>30 dènye jou</option><option value="90">90 dènye jou</option></select><input id="mQ" maxlength="60" placeholder="Chèche (imèl, mizik, metòd)"></div></div>
+    <div class="grid" id="mStats" style="grid-template-columns:repeat(3,1fr)"></div>
+    <div class="card" id="mList"></div>
+  </section>
+
+  <section id="t-cfg" class="hide">
+    <div class="card">
+      <h2>Kont pou resevwa peman</h2>
+      <p class="mut">Nimewo yo rete isit la, pa nan app la. App la chaje yo nan sèvè a sèlman lè yon moun ap peye.</p>
+      <div id="accts"></div>
+      <button id="addAcct" type="button" class="sm own">+ Ajoute yon kont</button>
+    </div>
+    <div class="card">
+      <h2>Plan ak abònman</h2>
+      <p class="mut">3 kategori, 5 plan. Yon plan parèt nan app la sèlman si l aktif epi li gen pri. Pa gen plan offline: san entènèt mizik yo afiche men yo pa jwe. "Streaming" = li ka koute mizik peyan yo an antye sou entènèt. "Mizik gratis" = kantite mizik peyan li ka pran gratis chak mwa. "Rabè" = pousantaj rabè sou chak achte.</p>
+      <div id="plans"></div>
+      <button id="addPlan" type="button" class="sm own">+ Ajoute yon plan</button>
+    </div>
+    <div class="card">
+      <h2>Kontwòl app la</h2>
+      <label class="sw"><input id="maint" type="checkbox"> Mòd antretyen (app la di moun yo tann)</label>
+      <input id="notice" maxlength="200" placeholder="Mesaj pou tout itilizatè (opsyonèl)">
+      <div class="cnt"><span id="noticeN">0</span> / 200</div>
+    </div>
+    <div class="card">
+      <h2>Peman pa ekout (plan ak abònman)</h2>
+      <p class="mut">Chak X ekout sou yon plan, atis la touche Y dola US (menm valè a konvèti nan lòt lajan yo). App la chanje sa an tan reyèl apre w fin sove.</p>
+      <div class="row"><input id="spPer" type="number" min="1" max="100000" step="1" placeholder="Chak ... ekout"><input id="spUsd" type="number" min="0" max="1000" step="any" placeholder="... dola US"></div>
+    </div>
+    <div class="card" id="giftCard">
+      <h2>Kado (ikòn, non, pri)</h2>
+      <p class="mut">Modifye chak kado: non gwoup la, non kado a, ikòn ak pri an dola US. Apre w sove, app la chanje otomatikman.</p>
+      <div id="giftSets"></div>
+      <button type="button" id="addSet">+ Ajoute yon gwoup kado</button>
+    </div>
+    <div class="card" id="promoCard">
+      <h2>Promosyon / òf espesyal</h2>
+      <p class="mut">Yon bànn ki parèt sou paj Akèy la. Ou ka modifye l oswa maske l nenpòt ki lè.</p>
+      <label class="sw"><input id="promoOn" type="checkbox"> Montre promosyon an nan app la</label>
+      <input id="promoTitle" maxlength="60" placeholder="Tit (egzanp: Òf espesyal Nwèl)" style="margin-top:8px">
+      <input id="promoText" maxlength="160" placeholder="Tèks (egzanp: -20% sou tout plan jiska 31 desanm)" style="margin-top:8px">
+    </div>
+    <div class="card" id="txtCard">
+      <h2>Tèks app la</h2>
+      <p class="mut">Chanje nenpòt tèks nan app la. Yon liy pou chak chanjman: tèks orijinal => nouvo tèks (egzanp: Bous 1 an => Bous 1 an: 500 goud). Maks 60 liy.</p>
+      <textarea id="txtOv" placeholder="tèks orijinal => nouvo tèks" style="min-height:110px"></textarea>
+    </div>
+    <button class="pri own" id="saveCfg" type="button" style="width:100%">Sove konfigirasyon</button>
+    <p class="err" id="cfgMsg" style="color:var(--ok)"></p>
+    <div class="card" id="rateCard">
+      <h2>To di jou (lajan etranje)</h2>
+      <p class="mut">To a mete ajou otomatikman chak 6 è. Yon maj ki retire nan to goud/dola a pwoteje app la, epi yon chanjman brid (maks 2% pa mizajou) anpeche varyasyon brisk.</p>
+      <div id="rateInfo"></div>
+      <div class="row" style="margin-top:8px"><select id="rMode"><option value="auto">Otomatik</option><option value="manual">Manyèl</option></select><input id="rManual" type="number" step="any" min="50" max="500" placeholder="1 dola = ? goud (manyèl)"></div>
+      <div class="row" style="margin-top:8px"><input id="rBuf" type="number" step="any" min="0" max="20" placeholder="Maj (goud)"><button class="pri fix own" id="rSave" type="button">Sove to a</button><button class="fix own" id="rRef" type="button">Mete ajou kounye a</button></div>
+      <p class="err" id="rMsg" style="color:var(--ok)"></p>
+      <div id="rHist" class="mut"></div>
+    </div>
+    <div class="card sec" id="secCard"></div>
+  </section>
+</main>
+
+<nav id="nav" class="hide">
+  <button data-t="sum" aria-selected="true" type="button">Rezime</button>
+  <button data-t="act" aria-selected="false" type="button">Aktivite</button>
+  <button data-t="usr" aria-selected="false" type="button">Moun</button>
+  <button data-t="msg" aria-selected="false" type="button">Mesaj<i id="msgN" class="hide">0</i></button>
+  <button data-t="mon" aria-selected="false" type="button">Lajan</button>
+  <button data-t="cfg" aria-selected="false" type="button">Konfig</button>
+</nav>
+
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id)};
+function h(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
+
+/* ---------- API (vre sèvè oswa demo) ---------- */
+var token=sessionStorage.getItem('adm_tok')||'',BASE=sessionStorage.getItem('adm_base')||'',DEMO=false,ROLE=sessionStorage.getItem('adm_role')||'';
+function cleanBase(b){b=(b||'').trim().replace(/\/+$/,'');return /^https?:\/\/[^\s]+$/.test(b)?b:''}
+async function api(path,opt){
+  if(DEMO)return demoApi(path,opt);
+  opt=opt||{};var hd={'Content-Type':'application/json'};if(token)hd.Authorization='Bearer '+token;
+  var r=await fetch(BASE+path,{method:opt.method||(opt.body?'POST':'GET'),headers:hd,body:opt.body?JSON.stringify(opt.body):undefined});
+  if(r.status===401&&path.indexOf('/login')<0&&path.indexOf('/google')<0){logout(true);throw new Error('Sesyon an fini. Konekte ankò.')}
+  if(opt.raw)return r;
+  var j={};try{j=await r.json()}catch(e){}
+  if(!r.ok)throw new Error(j.error||'Erè sèvè ('+r.status+')');
+  return j;
+}
+var OWN=function(){return ROLE==='owner'};
+function applyRole(){
+  document.querySelectorAll('.own').forEach(function(e){e.classList.toggle('hide',!OWN())});
+  var b=$('roleBadge');b.textContent=OWN()?'Mèt':'Staff';b.classList.toggle('hide',false);
+}
+
+/* ---------- demo ---------- */
+var D=null;
+function demoInit(){
+  var names=['Marie Joseph','Jean Baptiste','Stephanie Louis','Wilner Pierre','Nadege Charles','Kervens Auguste','Daphne Etienne','Rolex Desir','Fabienne Noel','Jhon Michel','Mirlande Paul','Samuel Dorval'];
+  var roles=['','','rapè','','beatmaker','','chantè','pwodiktè','','','label',''];
+  var types=['page_view','page_view','page_view','play','play','play','like','search','login','logout','signup','purchase','publish','login_fail','gift','studio_save','subscribe','payout_request'];
+  var tracks=['Tit Chante 1','Albòm Konplè','Tit Chante 2','Tit Chante 3','Videyo Ofisyèl','Flute Type Beat'];
+  var now=Date.now();
+  var us=names.map(function(n,i){return{uid:'u'+(i+1)+'x9f3',email:n.toLowerCase().replace(/ /g,'.')+'@example.com',name:n,role:roles[i],first:now-(20-i)*864e5,last:now-i*36e5*3,count:0,ip:'196.'+(10+i)+'.'+(20+i)+'.7',ua:'Android Chrome',lang:'ht',blocked:i===9,online:i<3}});
+  var ev=[],id=1;
+  for(var i=0;i<300;i++){
+    var u=us[(i*7)%us.length],ty=types[(i*5)%types.length],at=now-i*(i<60?9:55)*6e4,d={};
+    if(ty==='play'||ty==='like')d.title=tracks[i%tracks.length];
+    if(ty==='purchase'){d.title=tracks[i%tracks.length];d.amount=[90,150,800,300][i%4];d.method=['moncash','zelle','paypal','bank'][i%4]}
+    if(ty==='gift'){d.title=tracks[i%tracks.length];d.amount=[50,100,250][i%3]}
+    if(ty==='subscribe'){d.amount=[750,1300,2400][i%3];d.plan='basic'}
+    if(ty==='payout_request'){d.amount=[500,1200,3000][i%3];d.method='moncash'}
+    if(ty==='page_view')d.page=['akey','dekouvri','bibliyotek','kontak','atis'][i%5];
+    if(ty==='search')d.q=['konpa','rara','rap kreyòl','zouk'][i%4];
+    if(ty==='login'||ty==='signup'){d.email=u.email;d.name=u.name}
+    if(ty==='login_fail'){d.email=u.email;d.why='modpas pa bon'}
+    ev.push({id:id++,at:at,type:ty,uid:u.uid,sid:'s'+(i%9),ip:u.ip,ua:u.ua,data:d});u.count++;
+  }
+  var tk=[
+   {id:'t1',type:'siyale_mizik',status:'nouvo',created:now-36e5,updated:now-36e5,uid:us[3].uid,email:us[3].email,reason:'Dwa otè',ref:{id:'c1',title:'Tit Chante 2'},msgs:[{from:'user',at:now-36e5,text:'Mizik sa a se pa mwen ki fè l, yon moun pran l san pèmisyon.'}]},
+   {id:'t2',type:'peman',status:'ouvè',created:now-5*36e5,updated:now-2*36e5,uid:us[1].uid,email:us[1].email,reason:'',ref:null,msgs:[{from:'user',at:now-5*36e5,text:'Mwen peye ak Zelle men mizik la pa parèt nan bibliyotèk mwen.'},{from:'staff',at:now-2*36e5,text:'Nou ap verifye peman an. Voye imèl Zelle ou itilize a, tanpri.',by:'staff'}]},
+   {id:'t3',type:'siyale_albom',status:'nouvo',created:now-9*36e5,updated:now-9*36e5,uid:us[5].uid,email:us[5].email,reason:'Kontni ofansan',ref:{id:'c2',title:'Albòm Konplè'},msgs:[{from:'user',at:now-9*36e5,text:'Gen yon chante ki gen lang ofansan nan albòm sa a.'}]},
+   {id:'t4',type:'kont',status:'fèmen',created:now-3*864e5,updated:now-2*864e5,uid:us[7].uid,email:us[7].email,reason:'',ref:null,msgs:[{from:'user',at:now-3*864e5,text:'Mwen pèdi modpas mwen.'},{from:'staff',at:now-2*864e5,text:'Itilize kòd rekiperasyon ou a nan "Bliye modpas?".',by:'staff'}]}
+  ];
+  D={us:us,ev:ev,tk:tk,takedown:[],cfg:{accts:[{method:'bank',label:'Kont bank (USD)',acct:'0000 0000 0000',name:'Non mèt kont lan'},{method:'zelle',label:'Zelle',acct:'imèl@egzanp.com',name:'Non mèt kont lan'},{method:'paypal',label:'PayPal',acct:'imèl@egzanp.com',name:'Non mèt kont lan'},{method:'moncash',label:'MonCash (goud)',acct:'0000-0000',name:'Non mèt kont lan'}],maintenance:false,notice:'',streamPay:{per:100,usd:5},plans:[{id:'bous1',cat:1,catName:'Bous',name:'Bous 1',price:500,stream:false,free:0,discount:0,desc:'',active:false},{id:'bous2',cat:1,catName:'Bous',name:'Bous 2',price:1000,stream:false,free:5,discount:10,desc:'',active:true},{id:'pilye1',cat:2,catName:'Bigboss',name:'Pilye 1',price:1500,stream:true,free:10,discount:15,desc:'',active:true},{id:'bigboss2',cat:2,catName:'Bigboss',name:'Bigboss 2',price:2000,stream:true,free:12,discount:20,desc:'',active:true},{id:'duchess',cat:3,catName:'Duchess',name:'Duchess',price:5000,stream:true,free:25,discount:30,desc:'',active:true}]}};
+}
+function demoApi(path,opt){
+  if(!D)demoInit();
+  var u=new URL(path,'http://x'),p=u.pathname,q=u.searchParams,now=Date.now();
+  if(p==='/api/admin/me')return Promise.resolve({role:'owner',who:'owner',twofa:true,recoveryLeft:8});
+  if(p==='/api/admin/summary'){
+    var days=+q.get('days')||7,by={},per={},pl={},rev=0,byRole={};
+    for(var i=days-1;i>=0;i--)per[new Date(now-i*864e5).toISOString().slice(0,10)]={events:0,users:new Set()};
+    D.ev.forEach(function(e){if(e.at<now-days*864e5)return;by[e.type]=(by[e.type]||0)+1;var k=new Date(e.at).toISOString().slice(0,10);if(per[k]){per[k].events++;per[k].users.add(e.uid)}if(e.type==='play')pl[e.data.title]=(pl[e.data.title]||0)+1;if(e.type==='purchase')rev+=e.data.amount});
+    D.us.forEach(function(x){var r=x.role||'konsomatè';byRole[r]=(byRole[r]||0)+1});
+    var act=function(ms){return D.us.filter(function(x){return x.last>=now-ms}).length};
+    return Promise.resolve({days:days,totalEvents:D.ev.length,totalAccounts:D.us.length,totalDevices:D.us.length+4,blocked:D.us.filter(function(x){return x.blocked}).length,onlineAccounts:3,onlineAnon:2,active24h:act(864e5),active7d:act(7*864e5),active30d:act(30*864e5),newAccounts7d:5,byRole:byRole,openTickets:D.tk.filter(function(t){return t.status!=='fèmen'}).length,revenueHtg:rev,byType:by,series:Object.keys(per).map(function(d){return{day:d,events:per[d].events,users:per[d].users.size}}),topTracks:Object.keys(pl).map(function(t){return{title:t,n:pl[t]}}).sort(function(a,b){return b.n-a.n}).slice(0,8)});
+  }
+  if(p==='/api/admin/events'){
+    var lim=+q.get('limit')||50,before=+q.get('before')||Infinity,ty=q.get('type')||'',ui=q.get('uid')||'',tx=(q.get('q')||'').toLowerCase(),out=[];
+    for(var j=0;j<D.ev.length&&out.length<lim;j++){var e=D.ev[j];if(e.id>=before)continue;if(ty&&e.type!==ty)continue;if(ui&&e.uid!==ui)continue;if(tx&&JSON.stringify(e).toLowerCase().indexOf(tx)<0)continue;out.push(e)}
+    return Promise.resolve({events:out,next:out.length===lim?out[out.length-1].id:null});
+  }
+  if(p==='/api/admin/users')return Promise.resolve({users:D.us.slice()});
+  if(p==='/api/admin/money'){
+    var md=+q.get('days')||30,mt=(q.get('q')||'').toLowerCase(),inn=0,ou=0,items=[];
+    D.ev.forEach(function(e){if(e.at<now-md*864e5)return;var isIn=e.type==='purchase'||e.type==='gift'||e.type==='subscribe',isOut=e.type==='payout_request';if(!isIn&&!isOut)return;if(mt&&JSON.stringify(e).toLowerCase().indexOf(mt)<0)return;var a=e.data.amount||0;if(isIn)inn+=a;else ou+=a;items.push({id:e.id,at:e.at,dir:isIn?'in':'out',type:e.type,amount:a,uid:e.uid,data:e.data})});
+    return Promise.resolve({in:inn,out:ou,net:inn-ou,items:items.slice(0,300)});
+  }
+  if(p==='/api/admin/tickets'){var st=q.get('status')||'';return Promise.resolve({tickets:D.tk.filter(function(t){return !st||t.status===st}).sort(function(a,b){return b.updated-a.updated})})}
+  if(p==='/api/admin/ticket'){var t=D.tk.filter(function(x){return x.id===opt.body.id})[0];if(!t)return Promise.reject(new Error('pa jwenn'));if(opt.body.text){t.msgs.push({from:'staff',at:now,text:opt.body.text,by:'owner'});if(t.status==='nouvo')t.status='ouvè'}if(opt.body.status)t.status=opt.body.status;t.updated=now;return Promise.resolve({ok:true,ticket:t})}
+  if(p==='/api/admin/takedown'){var i2=D.takedown.indexOf(opt.body.id);if(opt.body.remove&&i2<0)D.takedown.push(opt.body.id);if(!opt.body.remove&&i2>=0)D.takedown.splice(i2,1);return Promise.resolve({ok:true})}
+  if(p==='/api/admin/block'){var b=D.us.filter(function(x){return x.uid===opt.body.uid})[0];if(b)b.blocked=!!opt.body.blocked;return Promise.resolve({ok:true})}
+  if(p==='/api/admin/config'&&!opt)return Promise.resolve(JSON.parse(JSON.stringify(D.cfg)));
+  if(p==='/api/admin/config'){D.cfg=Object.assign(D.cfg,opt.body);return Promise.resolve({ok:true})}
+  if(p==='/api/admin/rates'&&!opt){var hist=[];for(var k=7;k>=0;k--)hist.push({t:now-k*216e5,htg:131.4+Math.sin(k)*0.6,mode:'auto'});return Promise.resolve({state:{market:{HTG:131.62},effective:{HTG:128.62},updated:now-9e5,source:'auto',spike:false,history:hist},mode:'auto',manualHtg:0,buffer:3})}
+  if(p==='/api/admin/rates')return Promise.resolve({ok:true});
+  if(p==='/api/admin/rates/refresh')return Promise.resolve({ok:true});
+  if(p==='/api/admin/logout')return Promise.resolve({ok:true});
+  return Promise.reject(new Error('Pa disponib nan demo'));
+}
+
+/* ---------- login ---------- */
+function show(app){$('login').classList.toggle('hide',app);$('app').classList.toggle('hide',!app);$('nav').classList.toggle('hide',!app);$('logout').classList.toggle('hide',!app);$('demoBadge').classList.toggle('hide',!(app&&DEMO));if(!app)$('roleBadge').classList.add('hide')}
+function logout(silent){
+  if(!silent&&token&&!DEMO)api('/api/admin/logout',{method:'POST',body:{}}).catch(function(){});
+  token='';ROLE='';sessionStorage.removeItem('adm_tok');sessionStorage.removeItem('adm_role');DEMO=false;D=null;clearInterval(pollT);show(false);
+}
+$('logout').onclick=function(){logout(false)};
+$('base').value=BASE;
+function authInfo(){
+  BASE=cleanBase($('base').value)||BASE;
+  fetch(BASE+'/api/admin/auth-info').then(function(r){return r.json()}).then(function(i){
+    $('code').classList.toggle('hide',!i.twofa);
+    if(i.google&&!window.__g){window.__g=1;var s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.async=true;s.onload=function(){
+      google.accounts.id.initialize({client_id:i.google,callback:function(res){loginG(res.credential)}});
+      google.accounts.id.renderButton($('gbtn'),{theme:'filled_black',size:'large',text:'signin_with',shape:'pill'});
+    };document.head.appendChild(s)}
+  }).catch(function(){});
+}
+async function finish(r){token=r.token;ROLE=r.role;sessionStorage.setItem('adm_tok',token);sessionStorage.setItem('adm_role',ROLE);$('key').value='';$('code').value='';enter()}
+async function loginG(cred){
+  $('loginErr').textContent='';
+  try{finish(await api('/api/admin/google',{method:'POST',body:{credential:cred,code:$('code').value.trim()}}))}catch(e){$('loginErr').textContent=e.message}
+}
+$('go').onclick=async function(){
+  var key=$('key').value;$('loginErr').textContent='';
+  if(!key){$('loginErr').textContent='Mete kle a.';return}
+  BASE=cleanBase($('base').value);sessionStorage.setItem('adm_base',BASE);
+  try{finish(await api('/api/admin/login',{method:'POST',body:{key:key,code:$('code').value.trim()}}))}
+  catch(e){$('loginErr').textContent=e.message==='Failed to fetch'?'Pa ka rive sou sèvè a. Verifye adrès la.':e.message}
+};
+['key','code'].forEach(function(i){$(i).addEventListener('keydown',function(e){if(e.key==='Enter')$('go').click()})});
+$('base').addEventListener('change',authInfo);
+$('demo').onclick=function(){DEMO=true;ROLE='owner';enter()};
+function enter(){show(true);applyRole();tab('sum');pollMsg();pollT=setInterval(pollMsg,30000)}
+var pollT=0;
+if(location.hash==='#demo'){DEMO=true;ROLE='owner';enter()}else if(token){enter()}else{authInfo()}
+
+/* ---------- onglè ---------- */
+var cur='sum',timer=0;
+function tab(t){
+  cur=t;['sum','act','usr','msg','mon','cfg'].forEach(function(x){$('t-'+x).classList.toggle('hide',x!==t)});
+  document.querySelectorAll('#nav button').forEach(function(b){b.setAttribute('aria-selected',b.dataset.t===t?'true':'false')});
+  if(t==='sum')loadSum();if(t==='act')resetAct();if(t==='usr')loadUsers();if(t==='msg')loadTk();if(t==='mon')loadMon();if(t==='cfg')loadCfg();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('#nav button').forEach(function(b){b.onclick=function(){tab(b.dataset.t)}});
+async function pollMsg(){try{var r=await api('/api/admin/tickets?status=nouvo');var n=r.tickets.length,b=$('msgN');b.textContent=n;b.classList.toggle('hide',!n)}catch(e){}}
+
+/* ---------- rezime ---------- */
+function num(n){return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e4?(n/1e3).toFixed(1)+'k':String(n)}
+function statCard(label,val,cls){var c=h('div','stat '+(cls||''));c.appendChild(h('b','',val));c.appendChild(h('span','',label));return c}
+async function loadSum(){
+  try{
+    var s=await api('/api/admin/summary?days='+$('days').value),st=$('stats');st.textContent='';
+    st.appendChild(statCard('Kont konekte kounye a'+(s.onlineAnon?' (+'+s.onlineAnon+' vizitè)':''),s.onlineAccounts,'live'));
+    st.appendChild(statCard('Kont total',s.totalAccounts));
+    st.appendChild(statCard('Aktif 24 è',s.active24h));st.appendChild(statCard('Aktif 7 jou',s.active7d));
+    st.appendChild(statCard('Aktif 30 jou',s.active30d));st.appendChild(statCard('Nouvo kont (7j)',s.newAccounts7d));
+    st.appendChild(statCard('Mesaj ki ouvè',s.openTickets));st.appendChild(statCard('Revni ('+s.days+'j)',num(s.revenueHtg)+' G'));
+    var rl=$('roles');rl.textContent='';var rk=Object.keys(s.byRole).sort(function(a,b){return s.byRole[b]-s.byRole[a]}),rm=rk.length?s.byRole[rk[0]]:1;
+    rk.forEach(function(k){var r=h('div','hbar');r.appendChild(h('span','n',k));var t=h('div','t'),f=h('div');f.style.width=s.byRole[k]/rm*100+'%';t.appendChild(f);r.appendChild(t);r.appendChild(h('span','v',s.byRole[k]));rl.appendChild(r)});
+    if(!rk.length)rl.appendChild(h('p','mut','Poko gen kont.'));
+    var mx=Math.max.apply(null,s.series.map(function(d){return d.events}).concat([1])),bars=$('bars'),dy=$('barDays');bars.textContent='';dy.textContent='';
+    s.series.forEach(function(d){var b=h('div');b.style.height=Math.max(2,d.events/mx*100)+'%';b.title=d.day+': '+d.events;if(s.series.length<=14)b.appendChild(h('i','',d.events));bars.appendChild(b);dy.appendChild(h('span','',d.day.slice(8)))});
+    var ty=$('types');ty.textContent='';var tk=Object.keys(s.byType).sort(function(a,b){return s.byType[b]-s.byType[a]}),tm=tk.length?s.byType[tk[0]]:1;
+    tk.forEach(function(k){var r=h('div','hbar');r.appendChild(h('span','n',k));var t=h('div','t'),f=h('div');f.style.width=s.byType[k]/tm*100+'%';t.appendChild(f);r.appendChild(t);r.appendChild(h('span','v',s.byType[k]));ty.appendChild(r)});
+    if(!tk.length)ty.appendChild(h('p','mut','Poko gen aksyon.'));
+    var tp=$('tops');tp.textContent='';var pm=s.topTracks.length?s.topTracks[0].n:1;
+    s.topTracks.forEach(function(x){var r=h('div','hbar');r.appendChild(h('span','n',x.title));var t=h('div','t'),f=h('div');f.style.width=x.n/pm*100+'%';t.appendChild(f);r.appendChild(t);r.appendChild(h('span','v',x.n));tp.appendChild(r)});
+    if(!s.topTracks.length)tp.appendChild(h('p','mut','Poko gen mizik ki jwe.'));
+    var sel=$('fType'),old=sel.value;sel.textContent='';var o0=h('option','','Tout aksyon');o0.value='';sel.appendChild(o0);tk.forEach(function(k){var o=h('option','',k);o.value=k;sel.appendChild(o)});sel.value=old;
+  }catch(e){alert(e.message)}
+}
+$('days').onchange=loadSum;$('refSum').onclick=loadSum;
+
+/* ---------- aktivite ---------- */
+var next=null,fUid='',UMAP={},UM=[];
+function ago(t){var s=Math.max(1,Math.round((Date.now()-t)/1000));if(s<60)return s+' s';if(s<3600)return Math.round(s/60)+' min';if(s<86400)return Math.round(s/3600)+' è';return Math.round(s/86400)+' j'}
+function fmtDate(t){return new Date(t).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'medium'})}
+async function ensureUsers(){try{var r=await api('/api/admin/users');UM=r.users;UMAP={};r.users.forEach(function(u){UMAP[u.uid]=u.email||u.name||u.uid})}catch(e){}}
+function evRow(e){
+  var r=h('div','ev'),t=h('div','top');
+  t.appendChild(h('span','tag '+e.type,e.type));t.appendChild(h('b','',e.uid?(UMAP[e.uid]||e.uid.slice(0,12)):('anon · '+(e.sid||'?'))));
+  var tm=h('span','mut',ago(e.at));tm.title=fmtDate(e.at);t.appendChild(tm);r.appendChild(t);
+  var keys=Object.keys(e.data||{});
+  if(keys.length){var d=h('div','clamp mut',keys.map(function(k){return k+': '+e.data[k]}).join('  ·  '));d.onclick=function(){d.classList.toggle('open')};r.appendChild(d)}
+  var m=h('div','mut',fmtDate(e.at)+' · IP '+(e.ip||'?')+' · '+(e.ua||''));m.style.fontSize='11px';r.appendChild(m);
+  return r;
+}
+async function loadEvs(append){
+  var q='?limit=50';if(append&&next)q+='&before='+next;
+  if($('fType').value)q+='&type='+encodeURIComponent($('fType').value);if(fUid)q+='&uid='+encodeURIComponent(fUid);if($('fQ').value.trim())q+='&q='+encodeURIComponent($('fQ').value.trim());
+  try{
+    var r=await api('/api/admin/events'+q),box=$('evs');if(!append)box.textContent='';
+    r.events.forEach(function(e){box.appendChild(evRow(e))});
+    if(!box.children.length)box.appendChild(h('p','mut','Pa gen aksyon pou filtè sa a.'));
+    next=r.next;$('more').classList.toggle('hide',!next);
+  }catch(e){alert(e.message)}
+}
+async function resetAct(){await ensureUsers();var c=$('uChip');c.textContent='';if(fUid){var ch=h('span','chip','Itilizatè: '+(UMAP[fUid]||fUid)+'  ✕');ch.style.cursor='pointer';ch.onclick=function(){fUid='';resetAct()};c.appendChild(ch)}next=null;loadEvs(false)}
+$('fGo').onclick=function(){next=null;loadEvs(false)};$('fType').onchange=$('fGo').onclick;
+$('fQ').addEventListener('keydown',function(e){if(e.key==='Enter')$('fGo').click()});
+$('more').onclick=function(){loadEvs(true)};
+$('auto').onchange=function(){clearInterval(timer);if($('auto').checked)timer=setInterval(function(){if(cur==='act'){next=null;loadEvs(false)}},10000)};
+$('csv').onclick=async function(){
+  if(DEMO){alert('Nan demo, telechajman CSV pa disponib.');return}
+  try{var r=await api('/api/admin/export.csv',{raw:true});if(!r.ok)throw new Error('Pa otorize');var b=await r.blob(),a=h('a');a.href=URL.createObjectURL(b);a.download='htmusic-istorik.csv';document.body.appendChild(a);a.click();a.remove()}catch(e){alert(e.message)}
+};
+
+/* ---------- itilizatè ---------- */
+async function loadUsers(){
+  await ensureUsers();var box=$('users'),q=$('uQ').value.trim().toLowerCase();box.textContent='';
+  var L=UM.filter(function(u){return !q||(u.email+' '+u.name+' '+u.uid+' '+u.role).toLowerCase().indexOf(q)>=0});
+  if(!L.length)box.appendChild(h('div','card mut','Pa gen itilizatè.'));
+  L.forEach(function(u){
+    var c=h('div','card'),l=h('div');l.appendChild(h('b','',u.name||u.email||u.uid));
+    if(u.online){l.appendChild(document.createTextNode(' '));l.appendChild(h('span','tag ouvè','KONEKTE'))}
+    if(u.role){l.appendChild(document.createTextNode(' '));l.appendChild(h('span','tag',u.role))}
+    if(u.blocked){l.appendChild(document.createTextNode(' '));l.appendChild(h('span','tag admin_block','BLOKE'))}
+    c.appendChild(l);c.appendChild(h('div','mut',u.email||'(pa gen imèl)'));
+    c.appendChild(h('div','mut','Premye: '+fmtDate(u.first)+' · Dènye: '+ago(u.last)+' · '+u.count+' aksyon'));
+    c.appendChild(h('div','mut','IP '+(u.ip||'?')+' · '+(u.ua||'')));
+    var r=h('div','row');r.style.marginTop='8px';
+    var a=h('button','sm fix','Wè aktivite');a.type='button';a.onclick=function(){fUid=u.uid;tab('act')};r.appendChild(a);
+    if(OWN()){var k=h('button','sm fix '+(u.blocked?'ok':'bad'),u.blocked?'Debloke':'Bloke');k.type='button';
+    k.onclick=async function(){if(!u.blocked&&!confirm('Bloke '+(u.email||u.uid)+' ?'))return;try{await api('/api/admin/block',{method:'POST',body:{uid:u.uid,blocked:!u.blocked}});loadUsers()}catch(e){alert(e.message)}};
+    r.appendChild(k)}
+    c.appendChild(r);box.appendChild(c);
+  });
+}
+$('uQ').oninput=loadUsers;
+
+/* ---------- mesaj (asistans / siyalman) ---------- */
+var TKL={asistans:'Asistans',siyale_mizik:'Siyalman mizik',siyale_albom:'Siyalman albòm',peman:'Pwoblèm peman',kont:'Pwoblèm kont',lot:'Lòt'};
+async function loadTk(){
+  $('tkView').classList.add('hide');$('tkList').classList.remove('hide');
+  try{
+    var r=await api('/api/admin/tickets'+($('tkSt').value?'?status='+$('tkSt').value:'')),box=$('tks');box.textContent='';
+    if(!r.tickets.length)box.appendChild(h('div','card mut','Pa gen mesaj.'));
+    r.tickets.forEach(function(t){
+      var c=h('div','card tk'),top=h('div','row');top.style.gap='6px';
+      top.appendChild(h('span','tag fix '+t.status,t.status));top.appendChild(h('b','',TKL[t.type]||t.type));
+      var tm=h('span','mut fix',ago(t.updated));top.appendChild(tm);c.appendChild(top);
+      if(t.ref)c.appendChild(h('div','mut','Sou: '+t.ref.title));
+      c.appendChild(h('div','mut',(t.email||'(pa gen imèl)')+(t.reason?' · '+t.reason:'')));
+      var last=t.msgs[t.msgs.length-1];c.appendChild(h('div','clamp',(last.from==='staff'?'Nou: ':'')+last.text));
+      c.onclick=function(){openTk(t)};box.appendChild(c);
+    });
+    pollMsg();
+  }catch(e){alert(e.message)}
+}
+$('tkSt').onchange=loadTk;$('tkRef').onclick=loadTk;
+function openTk(t){
+  $('tkList').classList.add('hide');var v=$('tkView');v.classList.remove('hide');v.textContent='';
+  var back=h('button','sm','← Retounen');back.type='button';back.onclick=loadTk;v.appendChild(back);
+  var c=h('div','card');c.style.marginTop='10px';
+  c.appendChild(h('h2','',(TKL[t.type]||t.type)+' · '+t.status));
+  if(t.ref)c.appendChild(h('div','mut','Sou: '+t.ref.title+(t.reason?' · '+t.reason:'')));
+  c.appendChild(h('div','mut',(t.email||'(pa gen imèl)')+' · '+ago(t.created)));
+  var th=h('div');th.style.margin='10px 0';
+  t.msgs.forEach(function(m){var b=h('div','msg '+(m.from==='staff'?'staff':''),m.text);b.appendChild(h('small','',(m.from==='staff'?'Nou':'Itilizatè')+' · '+fmtDate(m.at)));th.appendChild(b)});
+  c.appendChild(th);
+  var ta=h('textarea');ta.maxLength=1000;ta.placeholder='Reponn itilizatè a...';c.appendChild(ta);
+  var cn=h('div','cnt','0 / 1000');ta.oninput=function(){cn.textContent=ta.value.length+' / 1000'};c.appendChild(cn);
+  var r=h('div','row');
+  var send=h('button','pri fix','Voye repons');send.type='button';
+  send.onclick=async function(){var tx=ta.value.trim();if(tx.length<2){return}send.disabled=true;try{var x=await api('/api/admin/ticket',{method:'POST',body:{id:t.id,text:tx,status:t.status==='nouvo'?'ouvè':t.status}});openTk(x.ticket)}catch(e){alert(e.message);send.disabled=false}};
+  r.appendChild(send);
+  var st=h('button','sm fix '+(t.status==='fèmen'?'ok':''),t.status==='fèmen'?'Rouvri':'Fèmen mesaj');st.type='button';
+  st.onclick=async function(){try{var x=await api('/api/admin/ticket',{method:'POST',body:{id:t.id,status:t.status==='fèmen'?'ouvè':'fèmen'}});openTk(x.ticket)}catch(e){alert(e.message)}};
+  r.appendChild(st);
+  if(OWN()&&t.ref&&t.ref.id&&(t.type==='siyale_mizik'||t.type==='siyale_albom')){
+    var td=h('button','sm fix bad','Retire mizik sa a nan app la');td.type='button';
+    td.onclick=async function(){if(!confirm('Retire "'+t.ref.title+'" nan app la ?'))return;try{await api('/api/admin/takedown',{method:'POST',body:{id:t.ref.id,remove:true}});td.textContent='Retire ✓';td.disabled=true}catch(e){alert(e.message)}};
+    r.appendChild(td);
+  }
+  c.appendChild(r);v.appendChild(c);
+}
+
+/* ---------- lajan ---------- */
+var ML={purchase:'Acha mizik',gift:'Kado',subscribe:'Abònman',payout_request:'Retrè atis'};
+async function loadMon(){
+  try{
+    await ensureUsers();
+    var r=await api('/api/admin/money?days='+$('mDays').value+($('mQ').value.trim()?'&q='+encodeURIComponent($('mQ').value.trim()):'')),st=$('mStats');st.textContent='';
+    var a=statCard('Antre',num(r.in)+' G','live');st.appendChild(a);var b=statCard('Soti',num(r.out)+' G');b.querySelector('b').style.color='var(--bad)';st.appendChild(b);st.appendChild(statCard('Balans',num(r.net)+' G'));
+    var box=$('mList');box.textContent='';
+    if(!r.items.length)box.appendChild(h('p','mut','Pa gen mouvman lajan.'));
+    r.items.forEach(function(it){
+      var row=h('div','ev'),t=h('div','top');
+      t.appendChild(h('span',it.dir==='in'?'in':'out',(it.dir==='in'?'↓ +':'↑ −')+num(it.amount)+' G'));
+      t.appendChild(h('b','',ML[it.type]||it.type));t.appendChild(h('span','mut',ago(it.at)));row.appendChild(t);
+      var d=it.data||{};row.appendChild(h('div','mut',(UMAP[it.uid]||it.uid||'')+(d.title?' · '+d.title:'')+(d.method?' · '+d.method:'')+' · '+fmtDate(it.at)));
+      box.appendChild(row);
+    });
+  }catch(e){alert(e.message)}
+}
+$('mDays').onchange=loadMon;$('mQ').oninput=loadMon;
+
+/* ---------- to di jou ---------- */
+async function loadRates(){
+  try{
+    var r=await api('/api/admin/rates'),s=r.state||{},info=$('rateInfo');info.textContent='';
+    var line=function(k,v){var d=h('div','mut');d.appendChild(document.createTextNode(k+': '));d.appendChild(h('b','',v));info.appendChild(d)};
+    line('To ki aplike (1 dola = goud)',s.effective&&s.effective.HTG?s.effective.HTG.toFixed(2):'—');
+    line('To mache a',s.market&&s.market.HTG?s.market.HTG.toFixed(2):'—');
+    line('Maj ki retire',String(r.buffer)+' goud');
+    line('Dènye mizajou',s.updated?fmtDate(s.updated)+(s.source?' ('+s.source+')':''):'poko gen');
+    if(s.spike)line('Atansyon','Gwo varyasyon dèyè a: to a ap dousman rive (pwoteksyon aktif)');
+    $('rMode').value=r.mode||'auto';$('rManual').value=r.manualHtg||'';$('rBuf').value=r.buffer;
+    var hs=$('rHist');hs.textContent='';(s.history||[]).slice(-8).reverse().forEach(function(x){hs.appendChild(h('div','',fmtDate(x.t)+' · '+x.htg.toFixed(2)+' G · '+x.mode))});
+    $('rateCard').querySelectorAll('input,select').forEach(function(e){e.disabled=!OWN()});
+  }catch(e){}
+}
+$('rSave').onclick=async function(){
+  var m=$('rMsg');m.style.color='var(--ok)';m.textContent='';
+  try{await api('/api/admin/rates',{method:'POST',body:{mode:$('rMode').value,manualHtg:+$('rManual').value||0,buffer:+$('rBuf').value}});m.textContent='Sove.';loadRates()}catch(e){m.style.color='var(--bad)';m.textContent=e.message}
+};
+$('rRef').onclick=async function(){
+  var m=$('rMsg');m.style.color='var(--ok)';m.textContent='';
+  try{await api('/api/admin/rates/refresh',{method:'POST',body:{}});m.textContent='To a mete ajou.';loadRates()}catch(e){m.style.color='var(--bad)';m.textContent=e.message}
+};
+
+/* ---------- plan ---------- */
+var PL=[];
+function drawPlans(){
+  var box=$('plans');box.textContent='';
+  PL.forEach(function(p,i){
+    var d=h('div','acct'),r1=h('div','row'),cs=h('select');[[1,'Kategori 1'],[2,'Kategori 2'],[3,'Kategori 3']].forEach(function(c){var o=h('option','',c[1]);o.value=c[0];cs.appendChild(o)});cs.value=p.cat||3;cs.onchange=function(){p.cat=+cs.value};r1.appendChild(cs);
+    var cn=h('input');cn.maxLength=30;cn.placeholder='Non kategori a (pa egz. Pilye)';cn.value=p.catName||'';cn.oninput=function(){p.catName=cn.value};r1.appendChild(cn);d.appendChild(r1);
+    var nm=h('input');nm.maxLength=40;nm.placeholder='Non plan an (pa egz. Bous 1)';nm.value=p.name||'';nm.oninput=function(){p.name=nm.value};d.appendChild(nm);
+    var r2=h('div','row'),pr=h('input');pr.type='number';pr.min=0;pr.max=1000000;pr.placeholder='Pri (goud / mwa)';pr.value=p.price||'';pr.oninput=function(){p.price=+pr.value||0};r2.appendChild(pr);
+    var fr=h('input');fr.type='number';fr.min=0;fr.max=100;fr.placeholder='Mizik gratis / mwa';fr.value=p.free||'';fr.oninput=function(){p.free=+fr.value||0};r2.appendChild(fr);var dc=h('input');dc.type='number';dc.min=0;dc.max=90;dc.placeholder='Rabè (%)';dc.value=p.discount||'';dc.oninput=function(){p.discount=+dc.value||0};r2.appendChild(dc);d.appendChild(r2);
+    var ds=h('input');ds.maxLength=140;ds.placeholder='Deskripsyon kout (opsyonèl)';ds.value=p.desc||'';ds.oninput=function(){p.desc=ds.value};d.appendChild(ds);
+    var r3=h('div','row');
+    [['stream','Streaming an antye sou entènèt'],['active','Aktif (parèt nan app la)']].forEach(function(f){var l=h('label','sw');var c=h('input');c.type='checkbox';c.checked=!!p[f[0]];c.onchange=function(){p[f[0]]=c.checked};l.appendChild(c);l.appendChild(document.createTextNode(f[1]));r3.appendChild(l)});
+    d.appendChild(r3);
+    if(OWN()){var x=h('button','sm bad','Retire plan an');x.type='button';x.onclick=function(){PL.splice(i,1);drawPlans()};d.appendChild(x)}
+    box.appendChild(d);
+  });
+  if(!PL.length)box.appendChild(h('p','mut','Poko gen plan.'));
+}
+$('addPlan').onclick=function(){if(PL.length>=10)return;PL.push({id:'plan'+(PL.length+1),cat:3,catName:'',name:'',price:0,stream:false,free:0,discount:0,desc:'',active:false});drawPlans()};
+
+/* ---------- konfig ---------- */
+var AC=[],MT=[['bank','Kont bank'],['zelle','Zelle'],['paypal','PayPal'],['cashapp','Cash App'],['wise','Wise'],['moncash','MonCash'],['natcash','NatCash'],['other','Lòt']];
+function drawAccts(){
+  var box=$('accts');box.textContent='';
+  AC.forEach(function(a,i){
+    var d=h('div','acct'),sel=h('select');MT.forEach(function(m){var o=h('option','',m[1]);o.value=m[0];sel.appendChild(o)});sel.value=a.method||'bank';sel.onchange=function(){a.method=sel.value};d.appendChild(sel);
+    [['label','Deskripsyon (pa egz. Zelle, USD)',80],['acct','Nimewo kont / imèl / @itilizatè',80],['name','Non mèt kont lan',80]].forEach(function(f){
+      var inp=h('input');inp.maxLength=f[2];inp.placeholder=f[1];inp.value=a[f[0]]||'';inp.oninput=function(){a[f[0]]=inp.value};d.appendChild(inp)});
+    if(OWN()){var x=h('button','sm bad','Retire');x.type='button';x.onclick=function(){AC.splice(i,1);drawAccts()};d.appendChild(x)}
+    box.appendChild(d);
+  });
+  if(!AC.length)box.appendChild(h('p','mut','Poko gen kont. Ajoute youn.'));
+}
+
+var GS=[];
+var DEFGS=[{id:'star',name:'STAR',sym:'★',tiers:[['bronz','Bronz',5,'🥉'],['ajan','Ajan',10,'🥈'],['lo','Lò',15,'🥇'],['dyaman','Dyaman',20,'💎'],['top','Étoile Royale',25,'🌟']]},{id:'icone',name:'ICONE',sym:'♛',tiers:[['bronz','Bronz',30,'🎧'],['ajan','Ajan',35,'🎤'],['lo','Lò',40,'🎸'],['dyaman','Dyaman',45,'🏆'],['top','Couronne',50,'👑']]},{id:'legend',name:'LEGENDAIRE',sym:'✦',tiers:[['bronz','Bronz',60,'🔥'],['ajan','Ajan',65,'⚡'],['lo','Lò',70,'🚀'],['dyaman','Dyaman',75,'💠'],['top','Trône',80,'🏰']]}];
+function drawGifts(){
+  var box=$('giftSets');box.textContent='';
+  GS.forEach(function(S,si){
+    var w=h('div','card');w.style.background='var(--panel2)';
+    var r=h('div','row'),n=h('input');n.value=S.name;n.maxLength=20;n.placeholder='Non gwoup';n.oninput=function(){S.name=n.value};
+    var y=h('input');y.value=S.sym;y.maxLength=2;y.style.maxWidth='64px';y.oninput=function(){S.sym=y.value};
+    var d=h('button','', 'Retire gwoup');d.type='button';d.onclick=function(){if(confirm('Retire gwoup sa a?')){GS.splice(si,1);drawGifts()}};
+    r.appendChild(n);r.appendChild(y);r.appendChild(d);w.appendChild(r);
+    S.tiers.forEach(function(t,ti){
+      var q=h('div','row');q.style.marginTop='6px';
+      var ic=h('input');ic.value=t[3]||'';ic.maxLength=4;ic.style.maxWidth='64px';ic.placeholder='🎁';ic.oninput=function(){t[3]=ic.value};
+      var nm=h('input');nm.value=t[1];nm.maxLength=24;nm.oninput=function(){t[1]=nm.value};
+      var pr=h('input');pr.type='number';pr.min='1';pr.max='1000';pr.step='any';pr.value=t[2];pr.style.maxWidth='90px';pr.oninput=function(){t[2]=parseFloat(pr.value)||0};
+      var x=h('button','','×');x.type='button';x.onclick=function(){S.tiers.splice(ti,1);drawGifts()};
+      q.appendChild(ic);q.appendChild(nm);q.appendChild(pr);q.appendChild(x);w.appendChild(q);
+    });
+    var a=h('button','','+ Kado');a.type='button';a.style.marginTop='8px';a.onclick=function(){if(S.tiers.length>=8)return;S.tiers.push(['k'+Date.now().toString(36),'Nouvo kado',5,'🎁']);drawGifts()};w.appendChild(a);
+    box.appendChild(w);
+  });
+}
+$('addSet').onclick=function(){if(GS.length>=6)return;GS.push({id:'g'+Date.now().toString(36),name:'NOUVO',sym:'★',tiers:[['k1','Kado 1',5,'🎁']]});drawGifts()};
+function loadApp(c){
+  var a=c.appcfg||{};GS=JSON.parse(JSON.stringify(a.gifts&&a.gifts.length?a.gifts:DEFGS));drawGifts();
+  var p=a.promo||{};$('promoOn').checked=!!p.on;$('promoTitle').value=p.title||'';$('promoText').value=p.text||'';
+  var t=a.texts||{};$('txtOv').value=Object.keys(t).map(function(k){return k+' => '+t[k]}).join('\n');
+  ['promoOn','promoTitle','promoText','txtOv','addSet'].forEach(function(i){$(i).disabled=!OWN()});
+}
+function collectApp(){
+  var texts={},n=0;$('txtOv').value.split('\n').forEach(function(l){var i=l.indexOf('=>');if(i>0&&n<60){var k=l.slice(0,i).trim(),v=l.slice(i+2).trim();if(k&&v){texts[k]=v;n++}}});
+  var g=GS.filter(function(S){return S.name&&S.tiers.length}).map(function(S){return{id:String(S.id),name:String(S.name).slice(0,20),sym:String(S.sym||'★').slice(0,2),tiers:S.tiers.filter(function(t){return t[1]&&t[2]>0}).map(function(t){return[String(t[0]),String(t[1]).slice(0,24),Math.round(t[2]*100)/100,String(t[3]||'🎁').slice(0,4)]})}});
+  return{gifts:g,promo:{on:$('promoOn').checked,title:$('promoTitle').value.slice(0,60),text:$('promoText').value.slice(0,160)},texts:texts};
+}
+async function loadCfg(){
+  loadRates();
+  try{
+    var c=await api('/api/admin/config');AC=(c.accts||[]).map(function(a){return{method:a.method||'bank',label:a.label,acct:a.acct,name:a.name}});drawAccts();PL=(c.plans||[]).map(function(x){return Object.assign({},x)});drawPlans();
+    loadApp(c);var sp=c.streamPay||{per:100,usd:5};$('spPer').value=sp.per;$('spUsd').value=sp.usd;$('maint').checked=!!c.maintenance;$('notice').value=c.notice||'';$('noticeN').textContent=$('notice').value.length;
+    ['maint','notice','spPer','spUsd'].forEach(function(i){$(i).disabled=!OWN()});
+    var me=await api('/api/admin/me'),sc=$('secCard');sc.textContent='';sc.appendChild(h('h2','','Sekirite admin'));
+    var ul=h('ul');ul.style.paddingLeft='18px';
+    [me.twofa?'2FA (aplikasyon otantifikasyon): AKTIVE':'2FA: pa aktive. Sou sèvè a: node server.js --setup-2fa',
+     me.twofa?'Kòd rekiperasyon ki rete: '+me.recoveryLeft:'',
+     'Wòl ou: '+(me.role==='owner'?'Mèt (tout kontwòl)':'Staff (wè + reponn mesaj)'),
+     'Koneksyon ak Gmail: mete GOOGLE_CLIENT_ID + ADMIN_GOOGLE_EMAILS sou sèvè a.',
+     'Chak koneksyon, chanjman ak bloke anrejistre nan istorik la (aktivite → admin_*).'].filter(Boolean).forEach(function(t){ul.appendChild(h('li','',t))});
+    sc.appendChild(ul);applyRole();
+  }catch(e){alert(e.message)}
+}
+$('addAcct').onclick=function(){if(AC.length>=12)return;AC.push({method:'bank',label:'',acct:'',name:''});drawAccts()};
+$('notice').oninput=function(){$('noticeN').textContent=$('notice').value.length};
+$('saveCfg').onclick=async function(){
+  var m=$('cfgMsg');m.style.color='var(--ok)';m.textContent='';
+  try{await api('/api/admin/config',{method:'POST',body:{accts:AC.filter(function(a){return a.label&&a.acct}),plans:PL,appcfg:collectApp(),streamPay:{per:Math.max(1,Math.round(+$('spPer').value||100)),usd:(isNaN(parseFloat($('spUsd').value))?5:Math.max(0,parseFloat($('spUsd').value)))},maintenance:$('maint').checked,notice:$('notice').value}});m.textContent='Sove.';setTimeout(function(){m.textContent=''},2500)}
+  catch(e){m.style.color='var(--bad)';m.textContent=e.message}
+};
+})();
+</script>
+</body>
+</html>
